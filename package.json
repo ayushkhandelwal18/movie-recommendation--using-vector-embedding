@@ -1,0 +1,16 @@
+{
+  "name": "moviematch-js-demo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Movie recommendation demo using vector embeddings, Node.js port of the Spring Boot demo",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js"
+  },
+  "engines": {
+    "node": ">=20.12"
+  },
+  "dependencies": {
+    "@google/genai": "^2.30.0"
+  }
+}
