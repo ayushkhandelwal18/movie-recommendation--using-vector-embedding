@@ -1,4 +1,4 @@
-# MovieMatch — JavaScript Demo
+# Movie Recommendation System using Vector Embeddings
 
 A simple Movie Recommendation System built to understand **Vector Embeddings, Semantic Search, and Cosine Similarity** using the Google Gemini API.
 
