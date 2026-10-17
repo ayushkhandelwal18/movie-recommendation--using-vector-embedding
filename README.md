@@ -1,116 +1,84 @@
 # MovieMatch — JavaScript Demo
 
-Semantic movie search and similar-movie recommendations built on vector embeddings.
-This is a standalone Node.js port of the Spring Boot `springDemo`: it has **no Java,
-no Maven and no Spring dependencies**, and the project no longer reads anything from
-`springDemo`.
+A simple Movie Recommendation System built to understand **Vector Embeddings, Semantic Search, and Cosine Similarity** using the Google Gemini API.
 
-Embeddings come from the **Google Gemini Embeddings API** through the official
-[`@google/genai`](https://www.npmjs.com/package/@google/genai) SDK.
+Instead of asking an LLM to recommend movies, this project converts movie descriptions into vector embeddings, compares them mathematically using cosine similarity, and ranks the results to find relevant movies.
 
-## How it works
+## Features
 
-1. `src/resources/movies.json` holds the demo catalog (title + description).
-2. On startup every description is turned into a vector with
-   `gemini-embedding-001` (**3072 dimensions**).
-3. A natural-language query is embedded with the same model.
-4. Every vector is compared against every movie vector with **cosine similarity**,
-   the matches are sorted by score and the **top 3** are returned.
-5. "Similar movies" compares the selected movie's stored vector against the rest —
-   no extra API call is needed for that endpoint.
+- **Semantic Movie Search:** Search for movies using natural-language queries like *"I want a survival movie set in space"*, even when the exact words do not appear in the movie description.
+- **Similar Movie Recommendations:** Select a movie like *Interstellar* and discover other movies with similar meanings based on their embeddings.
 
-Movie embeddings are cached in memory and, on first run, persisted to
-`src/resources/movie-embeddings.json`. Restarting the server reuses that file
-instead of regenerating all 30 vectors (startup drops from roughly a minute to
-well under a second). Delete the file to force a rebuild.
+## How It Works
 
-The cache is stamped with the provider and model name. If you switch provider or
-model, the old vectors are **discarded automatically** rather than being compared
-against vectors of a different size.
+1. Movie descriptions are loaded from a JSON file containing dummy movie data.
+2. The Google Gemini Embeddings API converts movie descriptions into numerical vectors.
+3. A natural-language search query is converted into a vector using the same embedding model.
+4. Cosine similarity measures how closely the vectors match.
+5. Results are ranked by similarity, and the most relevant movies are returned.
 
-## Requirements
-
-- Node.js **20.12 or newer** (uses the built-in `fetch` and `process.loadEnvFile`)
-- A Google Gemini API key
-
-## Configuration
-
-Copy the template and fill in your key:
-
-```bash
-cd jsDemo/src
-copy .env.example .env      # Windows
-# cp .env.example .env      # macOS / Linux
+```text
+Movie Descriptions
+        ↓
+Gemini Embeddings
+        ↓
+Cosine Similarity
+        ↓
+Ranking
+        ↓
+Movie Recommendations
 ```
 
-| Variable | Required | Default | Purpose |
-| --- | --- | --- | --- |
-| `Gemini_API_KEY` | yes | – | Gemini API key, read **server side only** |
-| `GEMINI_EMBEDDING_MODEL` | no | `gemini-embedding-001` | Embedding model |
-| `PORT` | no | `8080` | HTTP port |
-| `EMBEDDING_CACHE_FILE` | no | `src/resources/movie-embeddings.json` | Embedding cache location |
+## Tech Stack
 
-The key is loaded from `src/.env` at startup and is **never** sent to the browser.
+- **Backend:** Node.js
+- **Frontend:** HTML, CSS, JavaScript
+- **Embedding Model:** Google Gemini API
+- **Data Storage:** JSON file containing dummy movie data
 
-> If you change `GEMINI_EMBEDDING_MODEL`, delete
-> `src/resources/movie-embeddings.json` (or just restart — the mismatch is
-> detected and the vectors are regenerated for you).
+**No database is used.** This project uses a JSON file for learning purposes.
 
-## Run it
+## Getting Started
+
+### Prerequisites
+
+- [Node.js](https://nodejs.org/)
+- A [Google Gemini API key](https://aistudio.google.com/apikey)
+
+### 1. Clone the Repository
+
+### 2. Navigate to the Project Directory
+
+### 3. Install Dependencies
 
 ```bash
-cd jsDemo
 npm install
+```
+
+### 4. Configure Environment Variables
+
+Create a `.env` file inside the `src` directory and add your Gemini API key:
+
+```env
+Gemini_API_KEY=your_gemini_api_key
+```
+
+Replace `your_gemini_api_key` with your actual API key.
+
+**Keep your API key private. Never commit your `.env` file to GitHub.**
+
+### 5. Run the Application
+
+```bash
 npm start
 ```
 
-Then open <http://localhost:8080>.
+Open the application in your browser:
 
-## HTTP API
+[http://localhost:8080](http://localhost:8080)
 
-| Method | Path | Description |
-| --- | --- | --- |
-| `GET` | `/` | The single-page frontend |
-| `GET` | `/movies/search?query=...` | Top 3 movies by meaning |
-| `GET` | `/movies/{title}/similar` | Top 3 movies closest to `{title}` |
+## Learning Objective
 
-Both endpoints return:
+This project demonstrates how vector embeddings can power semantic search and recommendation systems without requiring an LLM for every recommendation request.
 
-```json
-[
-  {
-    "title": "The Martian",
-    "description": "An astronaut stranded on Mars uses science and ingenuity to survive until rescue.",
-    "match": 0.8238796408713406
-  }
-]
-```
-
-`match` is the cosine similarity (higher is a better match). A missing movie title
-returns `404`; a missing `query` returns `400`.
-
-## Layout
-
-```
-jsDemo/
-├── package.json
-├── package-lock.json
-├── .gitignore
-└── src/
-    ├── .env                  # local secrets, git-ignored
-    ├── .env.example
-    ├── server.js             # HTTP server + static file serving
-    ├── DemoApplication.js    # wires the embedding model into the service
-    ├── MovieController.js
-    ├── MovieService.js       # cosine similarity, ranking, top-K
-    ├── model/
-    │   ├── Movie.js
-    │   ├── MovieData.js
-    │   ├── MovieMatch.js
-    │   └── GeminiEmbeddingModel.js
-    ├── resources/
-    │   ├── movies.json
-    │   └── movie-embeddings.json   # generated cache, git-ignored
-    └── public/
-        └── index.html
-```
+The same concepts can be applied to product recommendations, document search, course discovery, job search, and Retrieval-Augmented Generation (RAG).
